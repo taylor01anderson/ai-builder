@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Dashboard - AI Builder</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <nav>
+      <a href="index.html">Chat</a>
+      <a href="dashboard.html">Dashboard</a>
+    </nav>
+    <div class="container">
+      <h1>Dashboard</h1>
+      <div class="dashboard">
+        <div class="sidebar">
+          <h2>Your Assistants</h2>
+          <div id="assistantList"></div>
+        </div>
+
+        <div class="workspace">
+          <h2>Create Assistant</h2>
+          <input id="assistantName" placeholder="Assistant Name" />
+          <textarea
+            id="systemPrompt"
+            placeholder="Describe your AI assistant"
+          ></textarea>
+          <button onclick="createAssistant()">Create</button>
+
+          <hr />
+
+          <h3>Chat With Assistant</h3>
+          <textarea id="chatInput" placeholder="Message your AI"></textarea>
+          <button onclick="sendPrompt()">Chat</button>
+          <pre id="chatOutput"></pre>
+        </div>
+      </div>
+    </div>
+
+    <script src="wasm_exec.js"></script>
+    <script>
+      const go = new Go();
+
+      WebAssembly.instantiateStreaming(fetch('main.wasm'), go.importObject)
+        .then((result) => {
+          return go.run(result.instance);
+        })
+        .catch((err) => {
+          console.error('Failed to start Go WASM:', err);
+        });
+
+      async function createAssistant() {
+        const name = document.getElementById('assistantName').value;
+        const prompt = document.getElementById('systemPrompt').value;
+
+        const response = await fetch('http://localhost:8080/api/assistants', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: name,
+            prompt: prompt,
+          }),
+        });
+
+        const data = await response.json();
+        alert('Assistant Created: ' + data.Name);
+        loadAssistants();
+      }
+
+      async function sendPrompt() {
+        const prompt = document.getElementById('chatInput').value;
+
+        const response = await fetch('http://localhost:8080/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: prompt,
+          }),
+        });
+
+        const data = await response.json();
+        document.getElementById('chatOutput').innerText = data.response;
+      }
+
+      async function loadAssistants() {
+        const response = await fetch('http://localhost:8080/api/assistants');
+        const data = await response.json();
+        const list = document.getElementById('assistantList');
+        list.innerHTML = '';
+        if (data) {
+          data.forEach((assistant) => {
+            const div = document.createElement('div');
+            div.textContent = assistant.name;
+            list.appendChild(div);
+          });
+        }
+      }
+
+      loadAssistants();
+    </script>
+  </body>
+</html>
