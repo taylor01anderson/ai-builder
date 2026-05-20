@@ -1,0 +1,3 @@
+[Error] Unhandled Promise Rejection: Error: Go program has already exited
+	_resume (wasm_exec.js:557)
+	(anonymous function) (wasm_exec.js:570)

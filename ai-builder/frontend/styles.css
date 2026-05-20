@@ -1,0 +1,37 @@
+body {
+  background: #0f172a;
+  color: white;
+  font-family: Arial;
+}
+
+.container {
+  width: 800px;
+  margin: auto;
+  padding-top: 50px;
+}
+
+input,
+textarea {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+}
+
+.assistant-card {
+  background: #1e293b;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  border: 1px solid #333;
+  transition: 0.2s;
+}
+
+.assistant-card:hover {
+  background: #334155;
+}

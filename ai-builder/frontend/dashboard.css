@@ -1,0 +1,22 @@
+.dashboard {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 300px;
+  background: #111827;
+  padding: 20px;
+}
+
+.workspace {
+  flex: 1;
+  padding: 40px;
+}
+
+.assistant-card {
+  background: #1e293b;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
