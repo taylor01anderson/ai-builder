@@ -1,11 +1,11 @@
 package routes
 
 import (
-    "ai-builder/config"
-    "ai-builder/models"
-    "net/http"
+	"ai-builder/config"
+	"ai-builder/models"
+	"net/http"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 func AssistantRoutes(rg *gin.RouterGroup) {

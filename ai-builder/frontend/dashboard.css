@@ -13,3 +13,10 @@
   flex: 1;
   padding: 40px;
 }
+
+.assistant-card {
+  background: #1e293b;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}

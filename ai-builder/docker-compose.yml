@@ -3,7 +3,7 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: tayloranderson
       POSTGRES_PASSWORD: password
       POSTGRES_DB: ai_builder
     ports:

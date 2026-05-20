@@ -21,3 +21,17 @@ button {
   margin-top: 20px;
   padding: 10px 20px;
 }
+
+.assistant-card {
+  background: #1e293b;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  border: 1px solid #333;
+  transition: 0.2s;
+}
+
+.assistant-card:hover {
+  background: #334155;
+}

@@ -37,6 +37,8 @@
 
     <script src="wasm_exec.js"></script>
     <script>
+      let selectedAssistant = null;
+
       const go = new Go();
 
       WebAssembly.instantiateStreaming(fetch('main.wasm'), go.importObject)
@@ -49,56 +51,105 @@
 
       async function createAssistant() {
         const name = document.getElementById('assistantName').value;
+
         const prompt = document.getElementById('systemPrompt').value;
 
         const response = await fetch('http://localhost:8080/api/assistants', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: name, prompt: prompt }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: name,
+            system_prompt: prompt,
+          }),
         });
 
         const data = await response.json();
-        alert('Assistant Created: ' + data.Name);
+
+        alert('Assistant Created: ' + data.name);
+
         loadAssistants();
       }
 
       async function sendPrompt() {
-        const prompt = document.getElementById('chatInput').value;
+        if (!selectedAssistant) {
+          alert('No assistant selected');
+
+          return;
+        }
+
+        console.log('SELECTED ASSISTANT:', selectedAssistant);
+
+        const payload = {
+          prompt: document.getElementById('chatInput').value,
+
+          assistant_id: selectedAssistant.id,
+        };
 
         try {
           const response = await fetch('http://localhost:8080/api/chat', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: prompt }),
+
+            headers: {
+              'Content-Type': 'application/json',
+            },
+
+            body: JSON.stringify(payload),
           });
 
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
+          console.log(JSON.stringify(payload));
 
           const data = await response.json();
-          document.getElementById('chatOutput').innerText = data.response;
-        } catch (error) {
-          console.error('Error sending prompt:', error);
-          document.getElementById('chatOutput').innerText =
-            'Error: ' + error.message;
+
+          console.log(data);
+
+          document.getElementById('chatOutput').innerText = JSON.stringify(
+            data,
+            null,
+            2,
+          );
+        } catch (err) {
+          console.error(err);
         }
       }
 
       async function loadAssistants() {
         const response = await fetch('http://localhost:8080/api/assistants');
-        const data = await response.json();
-        const list = document.getElementById('assistantList');
-        list.innerHTML = '';
-        if (data) {
-          data.forEach((assistant) => {
-            const div = document.createElement('div');
-            div.textContent = assistant.name;
-            list.appendChild(div);
-          });
-        }
-      }
 
+        const assistants = await response.json();
+
+        console.log('ASSISTANTS:', assistants);
+
+        const list = document.getElementById('assistantList');
+
+        list.innerHTML = '';
+
+        assistants.forEach((assistant) => {
+          console.log('LOADED:', assistant);
+
+          const div = document.createElement('div');
+
+          div.className = 'assistant-card';
+
+          div.innerHTML = `
+            <strong>
+                ${assistant.name}
+            </strong>
+        `;
+
+          div.onclick = () => {
+            selectedAssistant = assistant;
+
+            console.log('NOW SELECTED:', selectedAssistant);
+
+            document.getElementById('chatOutput').innerText =
+              'Loaded: ' + assistant.name;
+          };
+
+          list.appendChild(div);
+        });
+      }
       loadAssistants();
     </script>
   </body>
